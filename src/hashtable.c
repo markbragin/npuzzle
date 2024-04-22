@@ -1,8 +1,3 @@
-/*
- * Simple char*:char* hashtable. It doesn't free memory allocated for keys and
- * values. This work is on the caller.
- */
-
 #include "hashtable.h"
 
 #include <stdio.h>
@@ -65,6 +60,8 @@ void ht_insert(Hashtable *ht, char *key, char *value)
     }
 }
 
+/* Double the backing array size. Used by ht_insert() function when load factor
+ * exceedes 0.75 */
 void resize(Hashtable *ht)
 {
     unsigned i, count, new_capacity;
@@ -82,6 +79,7 @@ void resize(Hashtable *ht)
     ht->capacity = new_capacity;
 }
 
+/* Inserts key value pair into backing array */
 static void insert(HashtableItem *items, unsigned capacity, char *key,
                    char *value)
 {

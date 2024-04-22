@@ -1,8 +1,3 @@
-/*
- * Simple dynamic array of char* which allocates memory for each element
- * and frees it on destroy.
- */
-
 #include "dynamic_array.h"
 
 #include <stdio.h>
@@ -42,6 +37,7 @@ void da_push(DynamicArray *da, const char *value)
     da->size++;
 }
 
+/* Doubles the array size */
 static void resize(DynamicArray *da)
 {
     da->capacity = da->capacity * 2;
