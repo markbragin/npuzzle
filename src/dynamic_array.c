@@ -32,7 +32,7 @@ void da_push(DynamicArray *da, const char *value)
 {
     if (da->size == da->capacity)
         resize(da);
-    da->items[da->size] = malloc(strlen(value) * sizeof(char));
+    da->items[da->size] = malloc((strlen(value) + 1) * sizeof(char));
     strcpy(da->items[da->size], value);
     da->size++;
 }
