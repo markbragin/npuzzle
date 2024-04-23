@@ -55,7 +55,7 @@ void mh_push(MinHeap *mh, int priority, char* value)
 static void resize(MinHeap *mh)
 {
     mh->capacity = mh->capacity * 2;
-    mh->items = realloc(mh->items, mh->capacity);
+    mh->items = realloc(mh->items, mh->capacity * sizeof(mh->items[0]));
 }
 
 /* Fixes heap property after insertion element into idx */

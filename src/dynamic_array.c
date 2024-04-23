@@ -41,7 +41,7 @@ void da_push(DynamicArray *da, const char *value)
 static void resize(DynamicArray *da)
 {
     da->capacity = da->capacity * 2;
-    da->items = realloc(da->items, da->capacity);
+    da->items = realloc(da->items, da->capacity * sizeof(da->items[0]));
 }
 
 void da_print(DynamicArray *da)
