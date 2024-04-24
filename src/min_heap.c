@@ -1,9 +1,10 @@
 #include "min_heap.h"
 
+#include <bits/stdint-uintn.h>
 #include <stdlib.h>
 #include <string.h>
 
-static unsigned MIN_CAPACITY = 32;
+static unsigned MIN_CAPACITY = 8;
 
 static void resize(MinHeap *mh);
 static void sift_up(MinHeap *mh);
@@ -38,7 +39,8 @@ void mh_destroy(MinHeap *mh)
     mh->capacity = 0;
 }
 
-void mh_push(MinHeap *mh, int priority, char* value)
+void mh_push(MinHeap *mh, int priority, Board board, unsigned depth,
+             unsigned empty)
 {
     MinHeapItem item;
 
@@ -46,7 +48,9 @@ void mh_push(MinHeap *mh, int priority, char* value)
         resize(mh);
 
     item.priority = priority;
-    item.value = value;
+    item.board = board;
+    item.depth = depth;
+    item.empty = empty;
     mh->items[mh->size++] = item;
     sift_up(mh);
 }
@@ -55,7 +59,7 @@ void mh_push(MinHeap *mh, int priority, char* value)
 static void resize(MinHeap *mh)
 {
     mh->capacity = mh->capacity * 2;
-    mh->items = realloc(mh->items, mh->capacity * sizeof(mh->items[0]));
+    mh->items = realloc(mh->items, mh->capacity * sizeof(MinHeapItem));
 }
 
 /* Fixes heap property after insertion element into idx */
@@ -66,7 +70,7 @@ static void sift_up(MinHeap *mh)
     idx = mh->size - 1;
     par_idx = (idx - 1) / 2;
 
-    while (idx > 0 && mh->items[idx].priority < mh->items[par_idx].priority) {
+    while (idx > 0 && mh->items[idx].priority <= mh->items[par_idx].priority) {
         swap(&mh->items[idx], &mh->items[par_idx]);
         idx = par_idx;
         par_idx = (idx - 1) / 2;
@@ -88,26 +92,26 @@ MinHeapItem mh_pop(MinHeap *mh)
 
 static void sift_down(MinHeap *mh)
 {
-    unsigned min_idx, cur_idx, l_idx, r_idx;
+    unsigned min_idx, idx, l_idx, r_idx;
 
-    cur_idx = 0;
+    idx = 0;
     for (;;) {
-        min_idx = cur_idx;
-        l_idx = 2 * cur_idx + 1;
-        r_idx = 2 * cur_idx + 2;
+        min_idx = idx;
+        l_idx = 2 * idx + 1;
+        r_idx = 2 * idx + 2;
 
         if (l_idx < mh->size &&
-                mh->items[l_idx].priority < mh->items[min_idx].priority)
+                mh->items[l_idx].priority <= mh->items[min_idx].priority)
             min_idx = l_idx;
 
         if (r_idx < mh->size &&
-                mh->items[r_idx].priority < mh->items[min_idx].priority)
+                mh->items[r_idx].priority <= mh->items[min_idx].priority)
             min_idx = r_idx;
 
-        if (min_idx == cur_idx)
+        if (min_idx == idx)
             break;
 
-        swap(&mh->items[cur_idx], &mh->items[min_idx]);
-        cur_idx = min_idx;
+        swap(&mh->items[idx], &mh->items[min_idx]);
+        idx = min_idx;
     }
 }

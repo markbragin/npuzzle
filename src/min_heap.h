@@ -1,15 +1,21 @@
 /*
- * Min-heap with int priorities and char* values.
- * It doesn't free memory allocated for values. This work is on the caller.
+ * Min-heap with int priorities.
+ * It doesn't free memory allocated for boards. This work is on the caller.
  */
 
 
 #ifndef _MIN_HEAP_H_
 #define _MIN_HEAP_H_
 
+#include <bits/stdint-uintn.h>
+
+#include "types.h"
+
 typedef struct {
     int priority;
-    char *value;
+    Board board;
+    unsigned depth;
+    unsigned empty;
 } MinHeapItem;
 
 typedef struct {
@@ -18,18 +24,19 @@ typedef struct {
     unsigned capacity;
 } MinHeap;
 
-/* Creates min-heap allocating memory for *capacity* elements on a heap.
- * At least for 32 elements. */
+/* Creates min-heap allocating memory for *capacity* items on a heap.
+ * At least for 8 items. */
 MinHeap mh_create(unsigned capacity);
 
-/* Destroys min-heap. Deleting values is on the caller */
+/* Destroys min-heap. Deleting memory for boards is on the caller */
 void mh_destroy(MinHeap *mh);
 
-/* Pushes value to the heap with given priority */
-void mh_push(MinHeap *mh, int priority, char* value);
+/* Pushes item to the heap with given priority */
+void mh_push(MinHeap *mh, int priority, Board board, unsigned depth,
+             unsigned empty);
 
-/* Returns the element on top of the heap (with lowest priority)
- * and deletes it. If size = 0 returns garbage */
+/* Returns the item on top of the heap (with lowest priority)
+ * and deletes it. If size = 0 returns garbage :( */
 MinHeapItem mh_pop(MinHeap *mh);
 
 #endif

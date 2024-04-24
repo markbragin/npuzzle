@@ -1,29 +1,34 @@
 /*
- * Simple dynamic array of char* which allocates memory for each element
- * and frees it on destroy.
+ * Simple dynamic array of Boards (uint8_t*) (constant length)
+ * which allocates memory for each element and frees it on destroy.
  */
-
 
 #ifndef _DYNAMIC_ARRAY_H_
 #define _DYNAMIC_ARRAY_H_
 
+#include <bits/stdint-uintn.h>
+
+#include "types.h"
+
+
 typedef struct {
-    char **items;
+    Board *items;
     unsigned size;
     unsigned capacity;
+    unsigned item_len;
 } DynamicArray;
 
-/* Creates dynamic array allocation memory on a heap. At least for 32 elements */
-DynamicArray da_create(unsigned capacity);
+/* Creates dynamic array allocation memory on a heap. At least for 8 items */
+DynamicArray da_create(unsigned capacity, unsigned item_len);
 
-/* Frees all the memory allocated for every single item when destroing.
- * Don't use after destruction, create new one. */
+/* Frees all the memory allocated for every single item when destroying.
+ * Don't use after destruction, create new one */
 void da_destroy(DynamicArray *da);
 
 /* Pushes copy of value allocated on a heap to the back of the array */
-void da_push(DynamicArray *da, const char *value);
+void da_push(DynamicArray *da, const Board value);
 
-/* Prints all the 'strings' in the array */
-void da_print(DynamicArray *da);
+/* Returns last item in the arrays */
+Board da_back(DynamicArray *da);
 
 #endif

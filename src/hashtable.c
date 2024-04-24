@@ -1,30 +1,32 @@
 #include "hashtable.h"
 
+#include <bits/stdint-uintn.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 
-static unsigned MIN_CAPACITY = 32;
+static unsigned MIN_CAPACITY = 8;
 
 static void resize(Hashtable *ht);
-static void insert(HashtableItem *items, unsigned capacity, char *key,
-                   char *value);
+static void insert(HashtableItem *items, unsigned capacity, Board key,
+                   Board value, unsigned key_len);
 
-unsigned hash(const char *str)
+uint32_t hash(const uint8_t *str, unsigned len)
 {
     /* MurmurOAAT_32 */
-    unsigned h;
+    uint32_t h;
+    unsigned i;
 
     h = 3323198485ul;
-    for (; *str; ++str) {
-        h ^= *str;
+    for (i = 0; i < len; i++) {
+        h ^= str[i];
         h *= 0x5bd1e995;
         h ^= h >> 15;
     }
     return h;
 }
 
-Hashtable ht_create(unsigned capacity)
+Hashtable ht_create(unsigned capacity, unsigned key_len)
 {
     Hashtable ht;
     unsigned nbytes;
@@ -33,6 +35,7 @@ Hashtable ht_create(unsigned capacity)
     nbytes = sizeof(HashtableItem) * ht.capacity;
     ht.size = 0;
     ht.items = malloc(nbytes);
+    ht.key_len = key_len;
     memset(ht.items, 0, nbytes);
 
     return ht;
@@ -45,7 +48,7 @@ void ht_destroy(Hashtable *ht)
     ht->capacity = 0;
 }
 
-void ht_insert(Hashtable *ht, char *key, char *value)
+void ht_insert(Hashtable *ht, Board key, Board value)
 {
     HashtableItem *item;
 
@@ -55,7 +58,7 @@ void ht_insert(Hashtable *ht, char *key, char *value)
         if ((double)ht->size / ht->capacity > 0.75)
             resize(ht);
 
-        insert(ht->items, ht->capacity, key, value);
+        insert(ht->items, ht->capacity, key, value, ht->key_len);
         ht->size++;
     }
 }
@@ -72,7 +75,7 @@ void resize(Hashtable *ht)
     for (i = 0, count = 0; i < ht->capacity && count < ht->size; i++) {
         item = ht->items[i];
         if (item.state == OCCUPIED)
-            insert(new_items, new_capacity, item.key, item.value);
+            insert(new_items, new_capacity, item.key, item.value, ht->key_len);
     }
     free(ht->items);
     ht->items = new_items;
@@ -80,13 +83,13 @@ void resize(Hashtable *ht)
 }
 
 /* Inserts key value pair into backing array */
-static void insert(HashtableItem *items, unsigned capacity, char *key,
-                   char *value)
+static void insert(HashtableItem *items, unsigned capacity, Board key,
+                   Board value, unsigned key_len)
 {
     HashtableItem new_item;
     unsigned idx;
 
-    idx = hash(key) % capacity;
+    idx = hash(key, key_len) % capacity;
     while (items[idx].state != FREE)
         idx = (idx + 1) % capacity;
 
@@ -96,28 +99,15 @@ static void insert(HashtableItem *items, unsigned capacity, char *key,
     items[idx] = new_item;
 }
 
-HashtableItem *ht_find(Hashtable *ht, const char *key)
+HashtableItem *ht_find(Hashtable *ht, const Board key)
 {
     unsigned idx;
 
-    idx = hash(key) % ht->capacity;
+    idx = hash(key, ht->key_len) % ht->capacity;
     while (ht->items[idx].state != FREE) {
-        if (strcmp(ht->items[idx].key, key) == 0)
+        if (memcmp(ht->items[idx].key, key, ht->key_len) == 0)
             return &ht->items[idx];
         idx = (idx + 1) % ht->capacity;
     }
     return NULL;
-}
-
-void ht_print(Hashtable *ht)
-{
-    HashtableItem item;
-    unsigned i, count;
-    for (i = 0, count = 0; i < ht->capacity && count < ht->size; i++) {
-        item = ht->items[i];
-        if (item.state == OCCUPIED) {
-            printf("[%d] %s : %s\n", count, item.key, item.value);
-            count++;
-        }
-    }
 }
