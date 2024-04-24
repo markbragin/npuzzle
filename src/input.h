@@ -16,5 +16,7 @@ int validate_input(const int *buffer, unsigned len);
 /* Translates int[] buffer to Tile[] board (*Board) */
 void buffer_to_board(const int *buffer, Board board, unsigned len);
 
+/* Prints usage */
+void usage(void);
 
 #endif

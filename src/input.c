@@ -3,6 +3,7 @@
 #include <bits/types/FILE.h>
 #include <math.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include "heuristics.h"
@@ -23,6 +24,10 @@ void parse_args(int argc, char** argv, Heuristics *heuristics, Algo *algo)
             *heuristics = hamming_dist;
         else if (strcmp(argv[i], "-l") == 0 || strcmp(argv[i], "--linear") == 0)
             *heuristics = linear_conflicts;
+        else if (strcmp(argv[i], "--help") == 0) {
+            usage();
+            exit(0);
+        }
     }
 }
 
@@ -84,3 +89,26 @@ int validate_input(const int *buffer, unsigned len)
     return 0;
 }
 
+
+void usage(void)
+{
+    printf("USAGE:\n"
+           "    npuzzle FILE [options]\n\n"
+           "    Default options are --greedy --linear\n\n"
+           "ARGS:\n"
+           "    FILE\n"
+           "        File with input board.\n\n"
+           "OPTIONS:\n"
+           "    -g, --greedy\n"
+           "        Use greedy best first search algorithm.\n\n"
+           "    -a, --astar\n"
+           "        Use A* algorithm.\n\n"
+           "    -h, --hamming\n"
+           "        Use hamming distance heuristics.\n\n"
+           "    -m, --manhattan\n"
+           "        Use manhattan distance heuristics.\n\n"
+           "    -l, --linear\n"
+           "        Use linear conflicts heuristics.\n\n"
+           "        --help\n"
+           "        Print this help message.\n\n");
+}
