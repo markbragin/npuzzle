@@ -1,9 +1,112 @@
+#include <bits/stdint-uintn.h>
+#include <bits/types/FILE.h>
 #include <stdio.h>
+#include <string.h>
+#include <time.h>
 #include <unistd.h>
+#include <math.h>
 
-int main(void)
+#include "dynamic_array.h"
+#include "heuristics.h"
+#include "input.h"
+#include "solver.h"
+#include "types.h"
+
+
+int main(int argc, char **argv)
 {
-    printf("Hello\n");
+    unsigned size, i;
+    int n, status, user_ans;
+    clock_t start, end;
+
+    int buffer[256];
+    Tile board[256];
+
+    DynamicArray ans;
+    Heuristics heuristics;
+    Algo algo;
+
+    if (argc < 2) {
+        fprintf(stderr, "Must be at least one argument: filename\n");
+        return 1;
+    }
+
+    memset(buffer, 0, 256 * sizeof(int));
+
+    /* reading from input file */
+    n = read_from_file(argv[1], buffer);
+    if (n == -1) {
+        fprintf(stderr, "Error while opening file\n");
+        return 2;
+    } else if (n == -2) {
+        fprintf(stderr, "Wrong format in input file\n");
+        return 3;
+    } else if (n == -3) {
+        fprintf(stderr, "Max board size is 16x16\n");
+        return 3;
+    }
+
+    /* validation of input */
+    status = validate_input(buffer, n);
+    if (status == -1) {
+        fprintf(stderr, "Board is not square\n");
+        return 3;
+    } else if (status == -2) {
+        fprintf(stderr, "Values must be in [0; number of elements - 1]");
+        return 3;
+    } else if (status == -3) {
+        fprintf(stderr, "Values must not repeat themselves\n");
+        return 3;
+    }
+
+    size = (unsigned)sqrt(n);
+    buffer_to_board(buffer, board, n);
+
+    printf("Input board:\n");
+    print_board(board, size);
+
+    /* check solvability */
+    if (!is_solvable(board, size))
+        printf("Unsolvable\n");
+
+    /* parse args */
+    heuristics = manhattan_dist;
+    algo = GREEDY_BEFS;
+    parse_args(argc, argv, &heuristics, &algo);
+
+    /* print info */
+    putchar('\n');
+    if (algo == ASTAR)
+        printf("Algorithm: A*\n");
+    else if (algo == GREEDY_BEFS)
+        printf("Algorithm: Greedy Best First Search\n");
+
+    if (heuristics == manhattan_dist)
+        printf("Heuristics: Manhattan distance\n");
+    else if (heuristics == hamming_dist)
+        printf("Heuristics: Hamming distance\n");
+    else if (heuristics == linear_conflicts)
+        printf("Heuristics: Linear conflicts\n");
+    putchar('\n');
+
+    /* run algo */
+    start = clock();
+    ans = befs(board, size, algo, heuristics);
+    end = clock();
+    printf("\nTime elapsed: %.3fs\n", ((float)(end - start)) / CLOCKS_PER_SEC);
+
+    /* Print ans?? */
+    printf("\nPrint answer? [y/n]\n");
+    user_ans = getchar();
+    if (user_ans == 'y') {
+        for (i = ans.size; i > 0; i--) {
+            printf("[%d]\n", i - 1);
+            print_board(ans.items[i - 1], size);
+            putchar('\n');
+        }
+    }
+
+    da_destroy(&ans);
 
     return 0;
 }
