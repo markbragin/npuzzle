@@ -1,9 +1,6 @@
-#include <bits/stdint-uintn.h>
-#include <bits/types/FILE.h>
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
-#include <unistd.h>
 #include <math.h>
 
 #include "dynamic_array.h"
@@ -26,10 +23,10 @@ int main(int argc, char **argv)
     Heuristics heuristics;
     Algo algo;
 
-    if (argc < 2) {
-        fprintf(stderr, "Must be at least one argument: filename\n");
-        return 1;
-    }
+    /* parse args */
+    heuristics = linear_conflicts;
+    algo = GREEDY_BEFS;
+    parse_args(argc, argv, &heuristics, &algo);
 
     memset(buffer, 0, 256 * sizeof(int));
 
@@ -66,13 +63,10 @@ int main(int argc, char **argv)
     print_board(board, size);
 
     /* check solvability */
-    if (!is_solvable(board, size))
-        printf("Unsolvable\n");
-
-    /* parse args */
-    heuristics = manhattan_dist;
-    algo = GREEDY_BEFS;
-    parse_args(argc, argv, &heuristics, &algo);
+    if (!is_solvable(board, size)) {
+        printf("\nUnsolvable\n");
+        return 3;
+    }
 
     /* print info */
     putchar('\n');
@@ -100,7 +94,7 @@ int main(int argc, char **argv)
     user_ans = getchar();
     if (user_ans == 'y') {
         for (i = ans.size; i > 0; i--) {
-            printf("[%d]\n", i - 1);
+            printf("[%d]\n", ans.size - i);
             print_board(ans.items[i - 1], size);
             putchar('\n');
         }

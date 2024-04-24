@@ -13,7 +13,12 @@ void parse_args(int argc, char** argv, Heuristics *heuristics, Algo *algo)
 {
     int i;
 
-    for (i = 2; i < argc; i++) {
+    if (argc < 2) {
+        usage();
+        exit(1);
+    }
+
+    for (i = 1; i < argc; i++) {
         if (strcmp(argv[i], "-g") == 0 || strcmp(argv[i], "--greedy") == 0)
             *algo = GREEDY_BEFS;
         else if (strcmp(argv[i], "-a") == 0 || strcmp(argv[i], "--astar") == 0)
