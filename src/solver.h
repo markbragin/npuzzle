@@ -18,7 +18,7 @@ int is_solved(const Board board, unsigned size);
 /* Generates goal for given size */
 void generate_goal(Board board, unsigned size);
 
-/* Solves npuzzle using greedy best first search.
+/* Solves npuzzle using greedy best first search or A*.
  * Caller must destroy returned array via da_destroy */
 DynamicArray befs(Board board, unsigned size, Algo befs_type,
                   Heuristics heuristic);
