@@ -32,6 +32,18 @@ OPTIONS:
         Print this help message.
 ```
 
+## Installation
+
+```
+git clone https://github.com/markbragin/npuzzle.git
+cd npuzzle
+make release
+```
+
+then run
+
+`./npuzzle examples/3_31.txt -a -l`
+
 ## Examples
 
 ![npuzzle](./examples/example.png "npuzzle")
