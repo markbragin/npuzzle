@@ -49,7 +49,7 @@ int main(int argc, char **argv)
         fprintf(stderr, "Board is not square\n");
         return 3;
     } else if (status == -2) {
-        fprintf(stderr, "Values must be in [0; number of elements - 1]");
+        fprintf(stderr, "Values must be in [0; number of elements - 1]\n");
         return 3;
     } else if (status == -3) {
         fprintf(stderr, "Values must not repeat themselves\n");
