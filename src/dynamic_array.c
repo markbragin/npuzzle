@@ -16,15 +16,16 @@ DynamicArray da_create(unsigned capacity, unsigned item_len)
     da.capacity = capacity < MIN_CAPACITY ? MIN_CAPACITY : capacity;
     nbytes = sizeof(Board) * da.capacity;
     da.size = 0;
-    da.items = malloc(nbytes);
     da.item_len = item_len;
+    da.nallocated = 0;
+    da.items = malloc(nbytes);
     return da;
 }
 
 void da_destroy(DynamicArray *da)
 {
     unsigned i;
-    for (i = 0; i < da->size; i++)
+    for (i = 0; i < da->nallocated; i++)
         free(da->items[i]);
     free(da->items);
 }
@@ -33,7 +34,10 @@ void da_push(DynamicArray *da, const Board value)
 {
     if (da->size == da->capacity)
         resize(da);
-    da->items[da->size] = malloc(da->item_len * sizeof(Tile));
+    if (da->size >= da->nallocated) {
+        da->items[da->size] = malloc(da->item_len * sizeof(Tile));
+        da->nallocated++;
+    }
     memcpy(da->items[da->size], value, da->item_len);
     da->size++;
 }
@@ -48,4 +52,10 @@ static void resize(DynamicArray *da)
 Board da_back(DynamicArray *da)
 {
     return da->items[da->size - 1];
+}
+
+void da_pop(DynamicArray *da)
+{
+    if (da->size > 0)
+        da->size--;
 }

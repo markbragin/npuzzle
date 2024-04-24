@@ -16,6 +16,7 @@ typedef struct {
     unsigned size;
     unsigned capacity;
     unsigned item_len;
+    unsigned nallocated;
 } DynamicArray;
 
 /* Creates dynamic array allocation memory on a heap. At least for 8 items */
@@ -30,5 +31,8 @@ void da_push(DynamicArray *da, const Board value);
 
 /* Returns last item in the arrays */
 Board da_back(DynamicArray *da);
+
+/* Deletes last item without freein memory */
+void da_pop(DynamicArray *da);
 
 #endif
