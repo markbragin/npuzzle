@@ -117,6 +117,7 @@ static DynamicArray generate_solution_array(Hashtable *visited, unsigned size)
         da_push(&ans, item->value);
         item = ht_find(visited, item->value);
     }
+    da_reverse(&ans);
     return ans;
 }
 

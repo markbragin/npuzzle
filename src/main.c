@@ -98,9 +98,9 @@ int main(int argc, char **argv)
     printf("\nPrint answer? [y/n]\n");
     user_ans = getchar();
     if (user_ans == 'y') {
-        for (i = ans.size; i > 0; i--) {
-            printf("[%d]\n", ans.size - i);
-            print_board(ans.items[i - 1], size);
+        for (i = 0; i < ans.size; i++) {
+            printf("[%d]\n", i);
+            print_board(ans.items[i], size);
             putchar('\n');
         }
     }
