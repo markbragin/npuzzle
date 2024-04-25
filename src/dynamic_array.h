@@ -35,4 +35,7 @@ Board da_back(DynamicArray *da);
 /* Deletes last item without freein memory */
 void da_pop(DynamicArray *da);
 
+/* Check if the array contain item */
+int da_contains(DynamicArray *da, Board board);
+
 #endif

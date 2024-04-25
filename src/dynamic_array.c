@@ -59,3 +59,12 @@ void da_pop(DynamicArray *da)
     if (da->size > 0)
         da->size--;
 }
+
+int da_contains(DynamicArray *da, Board board)
+{
+    unsigned i;
+    for (i = 0; i < da->size; i++)
+        if (memcmp(da->items[i], board, da->item_len) == 0)
+            return 1;
+    return 0;
+}
