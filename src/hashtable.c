@@ -65,7 +65,7 @@ void ht_insert(Hashtable *ht, Board key, Board value)
 
 /* Double the backing array size. Used by ht_insert() function when load factor
  * exceedes 0.75 */
-void resize(Hashtable *ht)
+static void resize(Hashtable *ht)
 {
     unsigned i, count, new_capacity, nbytes;
     HashtableItem *new_items, item;
