@@ -67,11 +67,13 @@ void ht_insert(Hashtable *ht, Board key, Board value)
  * exceedes 0.75 */
 void resize(Hashtable *ht)
 {
-    unsigned i, count, new_capacity;
+    unsigned i, count, new_capacity, nbytes;
     HashtableItem *new_items, item;
 
     new_capacity = ht->capacity * 2;
-    new_items = malloc(sizeof(HashtableItem) * new_capacity);
+    nbytes = sizeof(HashtableItem) * new_capacity;
+    new_items = malloc(nbytes);
+    memset(new_items, 0, nbytes);
     for (i = 0, count = 0; i < ht->capacity && count < ht->size; i++) {
         item = ht->items[i];
         if (item.state == OCCUPIED)
