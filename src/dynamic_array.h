@@ -38,4 +38,7 @@ void da_pop(DynamicArray *da);
 /* Check if the array contain item */
 int da_contains(DynamicArray *da, Board board);
 
+/* Reverses the array */
+void da_reverse(DynamicArray *da);
+
 #endif

@@ -1,4 +1,5 @@
 #include "dynamic_array.h"
+#include "types.h"
 
 #include <bits/stdint-uintn.h>
 #include <stdlib.h>
@@ -25,6 +26,7 @@ DynamicArray da_create(unsigned capacity, unsigned item_len)
 void da_destroy(DynamicArray *da)
 {
     unsigned i;
+
     for (i = 0; i < da->nallocated; i++)
         free(da->items[i]);
     free(da->items);
@@ -63,8 +65,21 @@ void da_pop(DynamicArray *da)
 int da_contains(DynamicArray *da, Board board)
 {
     unsigned i;
+
     for (i = 0; i < da->size; i++)
         if (memcmp(da->items[i], board, da->item_len) == 0)
             return 1;
     return 0;
+}
+
+void da_reverse(DynamicArray *da)
+{
+    unsigned i, n;
+    Board tmp;
+
+    for (i = 0, n = da->size; i < n / 2; i++) {
+        tmp = da->items[i];
+        da->items[i] = da->items[n - i - 1];
+        da->items[n - i - 1] = tmp;
+    }
 }
