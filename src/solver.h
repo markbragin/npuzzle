@@ -23,4 +23,8 @@ void generate_goal(Board board, unsigned size);
 DynamicArray befs(Board board, unsigned size, Algo befs_type,
                   Heuristics heuristic);
 
+/* Solves npuzzle using IDA*.
+ * Caller must destroy returned array via da_destroy */
+DynamicArray idastar(Board board, unsigned size, Heuristics heuristic);
+
 #endif

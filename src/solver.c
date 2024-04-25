@@ -2,14 +2,20 @@
 #include "dynamic_array.h"
 #include "hashtable.h"
 #include "min_heap.h"
+#include "types.h"
 
 #include <bits/stdint-uintn.h>
+#include <limits.h>
 #include <stdio.h>
 #include <string.h>
+#include <time.h>
 
 static unsigned count_inversions(const Board board, unsigned size);
 static int find_empty_tile(const Board board, unsigned size);
 static DynamicArray generate_solution_array(Hashtable *visited, unsigned size);
+static int idastar_search(DynamicArray *path, unsigned size, int empty,
+                          int bound, Heuristics heuristics,
+                          unsigned *checked_count);
 
 void buffer_to_board(const int *buffer, Board board, unsigned len)
 {
@@ -191,4 +197,88 @@ DynamicArray befs(Board board, unsigned size, Algo algo, Heuristics heuristics)
 
     printf("Checked states: %u", checked_count);
     return ans;
+}
+
+DynamicArray idastar(Board board, unsigned size, Heuristics heuristics)
+{
+    int bound, new_bound, empty;
+    unsigned checked_count;
+    clock_t start, end;
+    DynamicArray path;
+
+    bound = heuristics(board, size);
+    empty = find_empty_tile(board, size);
+
+    path = da_create(100, size * size);
+    da_push(&path, board);
+
+    while (bound < INT_MAX) {
+        checked_count = 0;
+        start = clock();
+        new_bound = idastar_search(&path, size, empty, bound, heuristics,
+                                   &checked_count);
+        end = clock();
+        printf("Depth %3u. States checked: %10u. Time elapsed: %fs\n",
+               bound, checked_count, (double)(end - start) / CLOCKS_PER_SEC);
+        if (new_bound == -1)
+            break;
+        bound = new_bound;
+    }
+    printf("\nFound path with: %u steps\n", path.size - 1);
+    printf("Checked states: %u", checked_count);
+    return path;
+}
+
+/* Returns:
+ *     -1: when solved;
+ *     INT_MAX: when node has no successors */
+
+static int idastar_search(DynamicArray *path, unsigned size, int empty,
+                          int bound, Heuristics heuristics,
+                          unsigned *checked_count)
+
+{
+    Tile cur_board[256];
+    int estimated, min, new_empty, moves[4];
+    unsigned depth, i;
+
+    depth = path->size - 1;
+    (*checked_count)++;
+
+    estimated = depth + heuristics(da_back(path), size);
+    if (estimated > bound)
+        return estimated;
+    if (is_solved(da_back(path), size))
+        return -1;
+
+    moves[0] = -size; /* up */
+    moves[1] = 1;     /* right */
+    moves[2] = size;  /* down */
+    moves[3] = -1;    /* left */
+
+    min = INT_MAX;
+    for (i = 0; i < 4; i++) {
+        if ((i == 0 && (empty / size) == 0) ||
+            (i == 1 && (empty % size) == size - 1) ||
+            (i == 2 && (empty / size) == size - 1) ||
+            (i == 3 && (empty % size) == 0))
+            continue;
+
+        new_empty = empty + moves[i];
+        memcpy(cur_board, da_back(path), size * size);
+
+        cur_board[empty] = cur_board[new_empty];
+        cur_board[new_empty] = 0;
+        if (!da_contains(path, cur_board)) {
+            da_push(path, cur_board);
+            estimated = idastar_search(path, size, new_empty, bound, heuristics,
+                                       checked_count);
+            if (estimated == -1)
+                return -1;
+            if (estimated < min)
+                min = estimated;
+            da_pop(path);
+        }
+    }
+    return min;
 }

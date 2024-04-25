@@ -23,6 +23,8 @@ void parse_args(int argc, char** argv, Heuristics *heuristics, Algo *algo)
             *algo = GREEDY_BEFS;
         else if (strcmp(argv[i], "-a") == 0 || strcmp(argv[i], "--astar") == 0)
             *algo = ASTAR;
+        else if (strcmp(argv[i], "-i") == 0 || strcmp(argv[i], "--idastar") == 0)
+            *algo = IDASTAR;
         else if (strcmp(argv[i], "-m") == 0 || strcmp(argv[i], "--manhattan") == 0)
             *heuristics = manhattan_dist;
         else if (strcmp(argv[i], "-h") == 0 || strcmp(argv[i], "--hamming") == 0)
@@ -108,7 +110,9 @@ void usage(void)
            "        Use greedy best first search algorithm.\n\n"
            "    -a, --astar\n"
            "        Use A* algorithm.\n\n"
-           "    -h, --hamming\n"
+           "    -i, --idastar\n"
+           "        Use IDA* algorithm\n\n");
+    printf("    -h, --hamming\n"
            "        Use hamming distance heuristics.\n\n"
            "    -m, --manhattan\n"
            "        Use manhattan distance heuristics.\n\n"

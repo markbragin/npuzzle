@@ -74,6 +74,8 @@ int main(int argc, char **argv)
         printf("Algorithm: A*\n");
     else if (algo == GREEDY_BEFS)
         printf("Algorithm: Greedy Best First Search\n");
+    else if (algo == IDASTAR)
+        printf("Algorithm: IDA*\n");
 
     if (heuristics == manhattan_dist)
         printf("Heuristics: Manhattan distance\n");
@@ -85,7 +87,10 @@ int main(int argc, char **argv)
 
     /* run algo */
     start = clock();
-    ans = befs(board, size, algo, heuristics);
+    if (algo == IDASTAR)
+        ans = idastar(board, size, heuristics);
+    else
+        ans = befs(board, size, algo, heuristics);
     end = clock();
     printf("\nTime elapsed: %.3fs\n", ((float)(end - start)) / CLOCKS_PER_SEC);
 

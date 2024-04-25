@@ -15,7 +15,8 @@ typedef unsigned (*Heuristics)(const Board board, unsigned size);
 /* Type of pathfinding algorithm */
 typedef enum {
     GREEDY_BEFS,
-    ASTAR
+    ASTAR,
+    IDASTAR
 } Algo;
 
 
