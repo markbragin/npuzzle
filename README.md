@@ -19,6 +19,9 @@ OPTIONS:
     -a, --astar
         Use A* algorithm.
 
+    -i, --idastar
+        Use IDA* algorithm
+
     -h, --hamming
         Use hamming distance heuristics.
 
@@ -52,6 +55,7 @@ then run
 
 - **Greedy best first search**. Fast but finds not optimal solution.
 - **A***. Slow and memory consuming but finds optimal solution.
+- **IDA***. Slower than A* but consumes less memory and finds optimal solution.
 
 ## Heuristics
 
