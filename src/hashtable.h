@@ -1,5 +1,6 @@
 /*
- * Simple Board:Board (uint8_t:uint8_t) hashtable.
+ * Board:Board (uint8_t:uint8_t) hashtable.
+ * Board:int hashtable
  * It doesn't free memory allocated for keys and values.
  * This work is on the caller.
  */
@@ -12,6 +13,8 @@
 #include "types.h"
 
 
+/* Board:Board */
+
 typedef enum {
     FREE,
     OCCUPIED,
@@ -22,29 +25,61 @@ typedef struct {
     Board key;
     Board value;
     HashtableItemState state;
-} HashtableItem;
+} HashtableBItem;
 
 typedef struct {
-   HashtableItem *items;
+   HashtableBItem *items;
    unsigned size;
    unsigned capacity;
    unsigned key_len;
-} Hashtable;
+} HashtableB;
 
 /* Calculates hash for uint8_t* array using MurmurOAAT_32 algo */
 uint32_t hash(const uint8_t *str, unsigned len);
 
 /* Creates hash table allocating memory for *capacity* items on a heap.
  * At least for 8 items. */
-Hashtable ht_create(unsigned capacity, unsigned key_len);
+HashtableB htb_create(unsigned capacity, unsigned key_len);
 
 /* Destroys hash table. Deleting keys and values is on the caller */
-void ht_destroy(Hashtable *ht);
+void htb_destroy(HashtableB *ht);
 
 /* Inserts key value pair. If key exists replaces old value with new one*/
-void ht_insert(Hashtable *ht, Board key, Board value);
+void htb_insert(HashtableB *ht, Board key, Board value);
 
 /* Searches for key. If found one returns HashtableItem else return NULL */
-HashtableItem *ht_find(Hashtable *ht, const Board key);
+HashtableBItem *htb_find(HashtableB *ht, const Board key);
+
+
+
+
+/* Board:int */
+
+typedef struct {
+    Board key;
+    int value;
+    HashtableItemState state;
+} HashtableIItem;
+
+typedef struct {
+   HashtableIItem *items;
+   unsigned size;
+   unsigned capacity;
+   unsigned key_len;
+} HashtableI;
+
+
+/* Creates hash table allocating memory for *capacity* items on a heap.
+ * At least for 8 items. */
+HashtableI hti_create(unsigned capacity, unsigned key_len);
+
+/* Destroys hash table. Deleting keys and values is on the caller */
+void hti_destroy(HashtableI *ht);
+
+/* Inserts key value pair. If key exists replaces old value with new one*/
+void hti_insert(HashtableI *ht, Board key, int value);
+
+/* Searches for key. If found one returns HashtableItem else return NULL */
+HashtableIItem *hti_find(HashtableI *ht, const Board key);
 
 #endif
