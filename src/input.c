@@ -7,6 +7,7 @@
 #include <string.h>
 
 #include "heuristics.h"
+#include "pattern_database.h"
 
 
 void parse_args(int argc, char** argv, Heuristics *heuristics, Algo *algo)
@@ -31,6 +32,18 @@ void parse_args(int argc, char** argv, Heuristics *heuristics, Algo *algo)
             *heuristics = hamming_dist;
         else if (strcmp(argv[i], "-l") == 0 || strcmp(argv[i], "--linear") == 0)
             *heuristics = linear_conflicts;
+        else if (strcmp(argv[i], "-5") == 0 || strcmp(argv[i], "--database555") == 0)
+            *heuristics = pattern_database555;
+        else if (strcmp(argv[i], "-6") == 0 || strcmp(argv[i], "--database663") == 0)
+            *heuristics = pattern_database663;
+        else if (strcmp(argv[i], "--create555") == 0) {
+            create_pattern_database555();
+            exit(0);
+        }
+        else if (strcmp(argv[i], "--create663") == 0) {
+            exit(0);
+            create_pattern_database663();
+        }
         else if (strcmp(argv[i], "--help") == 0) {
             usage();
             exit(0);
@@ -111,13 +124,21 @@ void usage(void)
            "    -a, --astar\n"
            "        Use A* algorithm.\n\n"
            "    -i, --idastar\n"
-           "        Use IDA* algorithm\n\n");
+           "        Use IDA* algorithm.\n\n");
     printf("    -h, --hamming\n"
            "        Use hamming distance heuristics.\n\n"
            "    -m, --manhattan\n"
            "        Use manhattan distance heuristics.\n\n"
            "    -l, --linear\n"
            "        Use linear conflicts heuristics.\n\n"
+           "    -5, --database555\n"
+           "        Use pattern database 5-5-5 heuristics.\n\n"
+           "    -6, --database663\n"
+           "        Use pattern database 6-6-5 heuristics.\n\n"
+           "        --create555\n"
+           "        Create pattern database 5-5-5.\n\n"
+           "        --create663\n"
+           "        Create pattern database 6-6-3.\n\n"
            "        --help\n"
            "        Print this help message.\n\n");
 }

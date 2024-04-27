@@ -1,13 +1,16 @@
 #include "heuristics.h"
 
 #include <bits/stdint-uintn.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
+#include "pattern_database.h"
 #include "types.h"
 
 static int linear_conflicts_in_rows(const Board board, unsigned size);
 static int linear_conflicts_in_cols(const Board board, unsigned size);
+static void generate_group(Board board, const Tile *group);
 
 unsigned manhattan_dist(const Board board, unsigned size)
 {
@@ -146,4 +149,72 @@ static int linear_conflicts_in_cols(const Board board, unsigned size) {
         }
     }
     return to_move;
+}
+
+
+static void generate_group(Board board, const Tile *group)
+{
+    unsigned i, j, found;
+
+    for (i = 0; i < DB_BOARD_LEN; i++) {
+        found = 0;
+        for (j = 0; j < DB_BOARD_LEN; j++) {
+            if (board[i] == group[j]) {
+                found = 1;
+                break;
+            }
+        }
+        if (!found)
+            board[i] = 0;
+    }
+}
+
+unsigned pattern_database555(const Board board, unsigned size)
+{
+    unsigned h0, h1, h2, h3;
+    Tile group1[DB_BOARD_LEN], group2[DB_BOARD_LEN], group3[DB_BOARD_LEN];
+
+    memcpy(group1, board, DB_BOARD_LEN);
+    memcpy(group2, board, DB_BOARD_LEN);
+    memcpy(group3, board, DB_BOARD_LEN);
+
+    generate_group(group1, GROUP555_1);
+    generate_group(group2, GROUP555_2);
+    generate_group(group3, GROUP555_3);
+
+    h0 = linear_conflicts(board, DB_BOARD_SIZE);
+    h1 = db_get_cost(group1);
+    h2 = db_get_cost(group2);
+    h3 = db_get_cost(group3);
+
+    if (h1 == -1 || h2 == -1 || h3 == -1) {
+        fprintf(stderr, "Corrupted database\n");
+        exit(5);
+    }
+    return (h0 > h1 + h2 + h3) ? h0 : h1 + h2 + h3;
+}
+
+unsigned pattern_database663(const Board board, unsigned size)
+{
+    unsigned h0, h1, h2, h3;
+    Tile group1[DB_BOARD_LEN], group2[DB_BOARD_LEN], group3[DB_BOARD_LEN];
+
+    memcpy(group1, board, DB_BOARD_LEN);
+    memcpy(group2, board, DB_BOARD_LEN);
+    memcpy(group3, board, DB_BOARD_LEN);
+
+    generate_group(group1, GROUP663_1);
+    generate_group(group2, GROUP663_2);
+    generate_group(group3, GROUP663_3);
+
+    h0 = linear_conflicts(board, DB_BOARD_SIZE);
+    h1 = db_get_cost(group1);
+    h2 = db_get_cost(group2);
+    h3 = db_get_cost(group3);
+
+    if (h1 == -1 || h2 == -1 || h3 == -1) {
+        fprintf(stderr, "Corrupted database\n");
+        exit(5);
+    }
+    return (h0 > h1 + h2 + h3) ? h0 : h1 + h2 + h3;
 }

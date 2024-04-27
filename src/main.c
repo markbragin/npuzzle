@@ -6,6 +6,7 @@
 #include "dynamic_array.h"
 #include "heuristics.h"
 #include "input.h"
+#include "pattern_database.h"
 #include "solver.h"
 #include "types.h"
 
@@ -83,6 +84,16 @@ int main(int argc, char **argv)
         printf("Heuristics: Hamming distance\n");
     else if (heuristics == linear_conflicts)
         printf("Heuristics: Linear conflicts\n");
+    else if (heuristics == pattern_database555) {
+        printf("Heuristics: Pattern database 5-5-5\n");
+        printf("Reading database...\n");
+        read_pattern_database(DB_PATH555);
+    }
+    else if (heuristics == pattern_database663) {
+        printf("Heuristics: Pattern database 6-6-3\n");
+        printf("Reading database...\n");
+        read_pattern_database(DB_PATH663);
+    }
     putchar('\n');
 
     /* run algo */
@@ -93,6 +104,9 @@ int main(int argc, char **argv)
         ans = befs(board, size, algo, heuristics);
     end = clock();
     printf("\nTime elapsed: %.3fs\n", ((float)(end - start)) / CLOCKS_PER_SEC);
+
+    if (heuristics == pattern_database555 || heuristics == pattern_database663)
+        db_destroy();
 
     /* Print ans?? */
     printf("\nPrint answer? [y/n]\n");

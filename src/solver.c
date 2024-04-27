@@ -12,7 +12,7 @@
 
 static unsigned count_inversions(const Board board, unsigned size);
 static int find_empty_tile(const Board board, unsigned size);
-static DynamicArray generate_solution_array(Hashtable *visited, unsigned size);
+static DynamicArray generate_solution_array(HashtableB *visited, unsigned size);
 static int idastar_search(DynamicArray *path, unsigned size, int empty,
                           int bound, Heuristics heuristics,
                           unsigned *checked_count);
@@ -102,20 +102,20 @@ void generate_goal(Board board, unsigned size)
 
 /* If no solution returns empty array.
  * Caller must destroy returned array via da_destroy */
-static DynamicArray generate_solution_array(Hashtable *visited, unsigned size)
+static DynamicArray generate_solution_array(HashtableB *visited, unsigned size)
 {
     Tile goal[256];
-    HashtableItem *item;
+    HashtableBItem *item;
     DynamicArray ans;
 
     ans = da_create(0, size * size);
 
     generate_goal(goal, size);
-    item = ht_find(visited, goal);
+    item = htb_find(visited, goal);
     da_push(&ans, item->key);
     while (item->value) {
         da_push(&ans, item->value);
-        item = ht_find(visited, item->value);
+        item = htb_find(visited, item->value);
     }
     da_reverse(&ans);
     return ans;
@@ -125,11 +125,12 @@ DynamicArray befs(Board board, unsigned size, Algo algo, Heuristics heuristics)
 {
     Tile cur_board[256];
     unsigned checked_count, len, i;
-    int empty, priority, moves[4];
+    int empty, priority, moves[4], max_depth;
+    clock_t start, end;
 
     MinHeap heap;
     MinHeapItem cur;
-    Hashtable visited;
+    HashtableB visited;
     DynamicArray delete_later, ans;
 
     len = size * size;
@@ -144,21 +145,31 @@ DynamicArray befs(Board board, unsigned size, Algo algo, Heuristics heuristics)
     moves[2] = size;  /* down */
     moves[3] = -1;    /* left */
 
+    max_depth = 0;
     checked_count = 0;
 
-    visited = ht_create(0, len);
+    visited = htb_create(0, len);
     heap = mh_create(0);
     delete_later = da_create(0, len);
 
     da_push(&delete_later, board);
     mh_push(&heap, 0, da_back(&delete_later), 0, empty);
-    ht_insert(&visited, da_back(&delete_later), NULL);
+    htb_insert(&visited, da_back(&delete_later), NULL);
 
+    start = clock();
     while (heap.size > 0) {
         checked_count++;
         cur = mh_pop(&heap);
+        if (max_depth < cur.depth) {
+            end = clock();
+            printf("Depth: %u. States checked: %u. Time elapsed: %f\r",
+                   cur.depth, checked_count,
+                   (double)(end - start) / CLOCKS_PER_SEC);
+            fflush(stdout);
+            max_depth = cur.depth;
+        }
         if (is_solved(cur.board, size)) {
-            printf("Found path with: %u steps\n", cur.depth);
+            printf("\nFound path with: %u steps\n", cur.depth);
             break;
         }
 
@@ -175,7 +186,7 @@ DynamicArray befs(Board board, unsigned size, Algo algo, Heuristics heuristics)
             cur_board[cur.empty] = cur_board[empty];
             cur_board[empty] = 0;
 
-            if (ht_find(&visited, cur_board))
+            if (htb_find(&visited, cur_board))
                 continue;
 
             if (algo == ASTAR)
@@ -184,7 +195,7 @@ DynamicArray befs(Board board, unsigned size, Algo algo, Heuristics heuristics)
                 priority = heuristics(cur_board, size);
 
             da_push(&delete_later, cur_board);
-            ht_insert(&visited, da_back(&delete_later), cur.board);
+            htb_insert(&visited, da_back(&delete_later), cur.board);
             mh_push(&heap, priority, da_back(&delete_later), cur.depth + 1,
                     empty);
         }
@@ -193,7 +204,7 @@ DynamicArray befs(Board board, unsigned size, Algo algo, Heuristics heuristics)
     ans = generate_solution_array(&visited, size);
 
     da_destroy(&delete_later);
-    ht_destroy(&visited);
+    htb_destroy(&visited);
     mh_destroy(&heap);
 
     printf("Checked states: %u", checked_count);
