@@ -1,42 +1,53 @@
-CC := gcc
-CFLAGS := -Wall -Wpedantic -g -ansi -pedantic
-LDFLAGS := -lm
+ifeq ($(origin CC),default)
+	CC = gcc
+endif
 
-BINARY := npuzzle
-BUILD_DIR := build
-SOURCE_DIR := src
+CFLAGS ?= -Wall -Wpedantic -g -ansi -pedantic
+LDFLAGS ?= -lm
 
-SOURCES := $(shell find $(SOURCE_DIR) -name '*.c')
-OBJECTS := $(SOURCES:$(SOURCE_DIR)/%.c=$(BUILD_DIR)/%.o)
+BINARY ?= npuzzle
+BUILD_DIR ?= build
+SOURCE_DIR = src
 
-INCLUDE_DIRS := $(shell find $(SRC_DIRS) -type d)
-INCLUDE_FLAGS := $(addprefix -I,$(INC_DIRS))
+SOURCES = $(shell find $(SOURCE_DIR) -name '*.c')
+OBJECTS := $(SOURCES:%.c=$(BUILD_DIR)/%.o)
 
+INCLUDE_DIRS = $(shell find $(SOURCE_DIR) -type d)
+INCLUDE_FLAGS = $(addprefix -I,$(INCLUDE_DIRS))
 DEPS := $(OBJECTS:%.o=%.d)
+
+override CFLAGS += $(INCLUDE_FLAGS)
+
 
 .PHONY: all
 all: $(BINARY)
 
 $(BINARY): $(OBJECTS)
-	$(CC) $(OBJECTS) -o $@ $(LDFLAGS)
+	$(CC) $^ -o $@ $(LDFLAGS)
 
-$(BUILD_DIR)/%.d: $(SOURCE_DIR)/%.c
-	mkdir -p $(dir $@)
-	$(CC) $(INCLUDE_FLAGS) $< -MM -MT $(@:%.d=%.o) > $@
-
-%.o:
+$(OBJECTS): $(BUILD_DIR)/%.o: %.c
+	@mkdir -p $(@D)
 	$(CC) $(CFLAGS) -c $< -o $@
 
+$(DEPS): $(BUILD_DIR)/%.d: %.c
+	@mkdir -p $(@D)
+	$(CC) -E $(CFLAGS) $< -MM -MT $(@:.d=.o) > $@
 
-.PHONY: clean run release
 
+.PHONY: clean
 clean:
-	rm -rf $(OBJECTS) $(BINARY)
+	rm -rf $(OBJECTS) $(DEPS) $(BINARY)
 
+.PHONY: run
 run: all
 	@./$(BINARY)
 
-release: CFLAGS := -s -O2
+.PHONY: release
+release: CFLAGS := -O2 $(INCLUDE_FLAGS)
 release: all
 
--include $(DEPS)
+NODEPS = clean
+
+ifeq (0, $(words $(findstring $(MAKECMDGOALS), $(NODEPS))))
+include $(DEPS)
+endif
