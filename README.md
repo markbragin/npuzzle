@@ -20,7 +20,7 @@ OPTIONS:
         Use A* algorithm.
 
     -i, --idastar
-        Use IDA* algorithm
+        Use IDA* algorithm.
 
     -h, --hamming
         Use hamming distance heuristics.
@@ -30,6 +30,18 @@ OPTIONS:
 
     -l, --linear
         Use linear conflicts heuristics.
+
+    -5, --database555
+        Use pattern database 5-5-5 heuristics.
+
+    -6, --database663
+        Use pattern database 6-6-5 heuristics.
+
+        --create555
+        Create pattern database 5-5-5.
+
+        --create663
+        Create pattern database 6-6-3.
 
         --help
         Print this help message.
@@ -59,14 +71,24 @@ then run
 
 ## Heuristics
 
+In order of decreasing search time:
 - Hamming distance
 - Manhattan distance
 - Linear conflicts
+- Pattern database 5-5-5 (4x4 boards)
+- Pattern database 6-6-3 (4x4 boards)
+
+Pattern databases faster than other heuristics, but it take time to generate
+them.
+
+On my machine with i3 2nd gen and 8GB RAM:
+- PDB 5-5-5 takes about 1 minute to generate and uses 26 MB of storage space.
+- PDB 6-6-2 takes about 9 minute to generate and uses 188 MB of storage space.
 
 ## Limitations
 
 - Allowed boards not bigger than 16x16. (I don't think one needs more :D).
 - Solves only puzzles with the blank tile in the right bottom corner in the
 goal state.
-- Uses not the most optimal algorithms, so finding optimal path to the hardest
-4x4 puzzles takes a lot of time and memory :(.
+- Uses not the best heuristics, so finding optimal path to the hardest
+4x4 puzzles takes a lot of time [and memory] :(
