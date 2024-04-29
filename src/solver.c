@@ -1,14 +1,14 @@
-#include "solver.h"
-#include "dynamic_array.h"
-#include "hashtable.h"
-#include "min_heap.h"
-#include "types.h"
-
-#include <bits/stdint-uintn.h>
 #include <limits.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
+
+#include "dynamic_array.h"
+#include "hashtable.h"
+#include "min_heap.h"
+#include "solver.h"
+#include "types.h"
 
 static unsigned count_inversions(const Board board, unsigned size);
 static int find_empty_tile(const Board board, unsigned size);
@@ -46,8 +46,8 @@ int is_solvable(const Board board, unsigned size)
                 row_num = i / size;
                 break;
             }
-        if ((inversions % 2 == 0 && row_num % 2 != 0) ||
-            (inversions % 2 != 0 && row_num % 2 == 0))
+        if ((inversions % 2 == 0 && row_num % 2 != 0)
+            || (inversions % 2 != 0 && row_num % 2 == 0))
             return 1;
     } else {
         if (inversions % 2 == 0)
@@ -174,10 +174,10 @@ DynamicArray befs(Board board, unsigned size, Algo algo, Heuristics heuristics)
         }
 
         for (i = 0; i < 4; i++) {
-            if ((i == 0 && (cur.empty / size) == 0) ||
-                (i == 1 && (cur.empty % size) == size - 1) ||
-                (i == 2 && (cur.empty / size) == size - 1) ||
-                (i == 3 && (cur.empty % size) == 0))
+            if ((i == 0 && (cur.empty / size) == 0)
+                || (i == 1 && (cur.empty % size) == size - 1)
+                || (i == 2 && (cur.empty / size) == size - 1)
+                || (i == 3 && (cur.empty % size) == 0))
                 continue;
 
             empty = cur.empty + moves[i];
@@ -230,8 +230,8 @@ DynamicArray idastar(Board board, unsigned size, Heuristics heuristics)
         new_bound = idastar_search(&path, size, empty, bound, heuristics,
                                    &checked_count);
         end = clock();
-        printf("Depth %3u. States checked: %10u. Time elapsed: %fs\n",
-               bound, checked_count, (double)(end - start) / CLOCKS_PER_SEC);
+        printf("Depth %3u. States checked: %10u. Time elapsed: %fs\n", bound,
+               checked_count, (double)(end - start) / CLOCKS_PER_SEC);
         if (new_bound == -1)
             break;
         bound = new_bound;
@@ -270,10 +270,10 @@ static int idastar_search(DynamicArray *path, unsigned size, int empty,
 
     min = INT_MAX;
     for (i = 0; i < 4; i++) {
-        if ((i == 0 && (empty / size) == 0) ||
-            (i == 1 && (empty % size) == size - 1) ||
-            (i == 2 && (empty / size) == size - 1) ||
-            (i == 3 && (empty % size) == 0))
+        if ((i == 0 && (empty / size) == 0)
+            || (i == 1 && (empty % size) == size - 1)
+            || (i == 2 && (empty / size) == size - 1)
+            || (i == 3 && (empty % size) == 0))
             continue;
 
         new_empty = empty + moves[i];

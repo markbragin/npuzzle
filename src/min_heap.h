@@ -3,11 +3,8 @@
  * It doesn't free memory allocated for boards. This work is on the caller.
  */
 
-
 #ifndef _MIN_HEAP_H_
 #define _MIN_HEAP_H_
-
-#include <bits/stdint-uintn.h>
 
 #include "types.h"
 

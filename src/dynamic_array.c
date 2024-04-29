@@ -1,9 +1,8 @@
-#include "dynamic_array.h"
-#include "types.h"
-
-#include <bits/stdint-uintn.h>
 #include <stdlib.h>
 #include <string.h>
+
+#include "dynamic_array.h"
+#include "types.h"
 
 static unsigned MIN_CAPACITY = 8;
 

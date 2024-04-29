@@ -4,7 +4,7 @@
 #include "types.h"
 
 /* Parses arguments and sets heuristics and algorithm if any */
-void parse_args(int argc, char** argv, Heuristics *heuristics, Algo *algo);
+void parse_args(int argc, char **argv, Heuristics *heuristics, Algo *algo);
 
 /* Reads board from file. Returns number of elements read */
 int read_from_file(const char *filename, int *buffer);

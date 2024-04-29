@@ -8,10 +8,9 @@
 #ifndef _HASHTABLE_H_
 #define _HASHTABLE_H_
 
-#include <bits/stdint-uintn.h>
+#include <stdint.h>
 
 #include "types.h"
-
 
 /* Board:Board */
 
@@ -28,10 +27,10 @@ typedef struct {
 } HashtableBItem;
 
 typedef struct {
-   HashtableBItem *items;
-   unsigned size;
-   unsigned capacity;
-   unsigned key_len;
+    HashtableBItem *items;
+    unsigned size;
+    unsigned capacity;
+    unsigned key_len;
 } HashtableB;
 
 /* Calculates hash for uint8_t* array using MurmurOAAT_32 algo */
@@ -50,9 +49,6 @@ void htb_insert(HashtableB *ht, Board key, Board value);
 /* Searches for key. If found one returns HashtableItem else return NULL */
 HashtableBItem *htb_find(HashtableB *ht, const Board key);
 
-
-
-
 /* Board:int */
 
 typedef struct {
@@ -62,12 +58,11 @@ typedef struct {
 } HashtableIItem;
 
 typedef struct {
-   HashtableIItem *items;
-   unsigned size;
-   unsigned capacity;
-   unsigned key_len;
+    HashtableIItem *items;
+    unsigned size;
+    unsigned capacity;
+    unsigned key_len;
 } HashtableI;
-
 
 /* Creates hash table allocating memory for *capacity* items on a heap.
  * At least for 8 items. */

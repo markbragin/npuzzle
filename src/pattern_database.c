@@ -1,25 +1,30 @@
-#include "pattern_database.h"
-#include "dynamic_array.h"
-#include "hashtable.h"
-#include "min_heap.h"
-#include "types.h"
-
-#include <bits/types/FILE.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
 
+#include "dynamic_array.h"
+#include "hashtable.h"
+#include "min_heap.h"
+#include "pattern_database.h"
+#include "types.h"
+
 const char *DB_PATH555 = "database/pdb5-5-5";
 const char *DB_PATH663 = "database/pdb6-6-3";
 
-const Tile GROUP555_1[DB_BOARD_LEN] = {1, 2, 3, 0, 5, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-const Tile GROUP555_2[DB_BOARD_LEN] = {0, 0, 0, 4, 0, 0, 7, 8, 0, 0, 11, 12, 0, 0, 0, 0};
-const Tile GROUP555_3[DB_BOARD_LEN] = {0, 0, 0, 0, 0, 0, 0, 0, 9, 10, 0, 0, 13, 14, 15, 0};
+const Tile GROUP555_1[DB_BOARD_LEN]
+    = { 1, 2, 3, 0, 5, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+const Tile GROUP555_2[DB_BOARD_LEN]
+    = { 0, 0, 0, 4, 0, 0, 7, 8, 0, 0, 11, 12, 0, 0, 0, 0 };
+const Tile GROUP555_3[DB_BOARD_LEN]
+    = { 0, 0, 0, 0, 0, 0, 0, 0, 9, 10, 0, 0, 13, 14, 15, 0 };
 
-const Tile GROUP663_1[DB_BOARD_LEN] = {1, 0, 0, 0, 5, 6, 0, 0, 9, 10, 0, 0, 13, 0, 0, 0};
-const Tile GROUP663_2[DB_BOARD_LEN] = {0, 0, 0, 0, 0, 0, 7, 8, 0, 0, 11, 12, 0, 14, 15, 0};
-const Tile GROUP663_3[DB_BOARD_LEN] = {0, 2, 3, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+const Tile GROUP663_1[DB_BOARD_LEN]
+    = { 1, 0, 0, 0, 5, 6, 0, 0, 9, 10, 0, 0, 13, 0, 0, 0 };
+const Tile GROUP663_2[DB_BOARD_LEN]
+    = { 0, 0, 0, 0, 0, 0, 7, 8, 0, 0, 11, 12, 0, 14, 15, 0 };
+const Tile GROUP663_3[DB_BOARD_LEN]
+    = { 0, 2, 3, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
 static HashtableI PATTERN_DATABASE;
 static DynamicArray BACKING_ARRAY;
@@ -203,10 +208,10 @@ static void generate_permutations(const Tile *group)
         hti_insert(&visited, cur.board, cur.priority);
 
         for (i = 0; i < 4; i++) {
-            if ((i == 0 && (cur.empty / size) == 0) ||
-                (i == 1 && (cur.empty % size) == size - 1) ||
-                (i == 2 && (cur.empty / size) == size - 1) ||
-                (i == 3 && (cur.empty % size) == 0))
+            if ((i == 0 && (cur.empty / size) == 0)
+                || (i == 1 && (cur.empty % size) == size - 1)
+                || (i == 2 && (cur.empty / size) == size - 1)
+                || (i == 3 && (cur.empty % size) == 0))
                 continue;
 
             new_empty = cur.empty + moves[i];
@@ -224,14 +229,15 @@ static void generate_permutations(const Tile *group)
                 cur_board[new_empty] = 0;
                 da_push(&BACKING_ARRAY, cur_board);
                 if (!hti_find(&PATTERN_DATABASE, cur_board))
-                    hti_insert(&PATTERN_DATABASE, da_back(&BACKING_ARRAY), priority);
+                    hti_insert(&PATTERN_DATABASE, da_back(&BACKING_ARRAY),
+                               priority);
                 cur_board[new_empty] = 0xFF;
-            }
-            else
+            } else
                 priority = cur.priority;
 
             da_push(&delete_later, cur_board);
-            mh_push(&heap, priority, da_back(&delete_later), priority, new_empty);
+            mh_push(&heap, priority, da_back(&delete_later), priority,
+                    new_empty);
         }
     }
     printf("Checked states: %u\n", checked_count);

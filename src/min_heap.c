@@ -1,8 +1,7 @@
-#include "min_heap.h"
-
-#include <bits/stdint-uintn.h>
 #include <stdlib.h>
 #include <string.h>
+
+#include "min_heap.h"
 
 static unsigned MIN_CAPACITY = 8;
 
@@ -100,12 +99,12 @@ static void sift_down(MinHeap *mh)
         l_idx = 2 * idx + 1;
         r_idx = 2 * idx + 2;
 
-        if (l_idx < mh->size &&
-                mh->items[l_idx].priority <= mh->items[min_idx].priority)
+        if (l_idx < mh->size
+            && mh->items[l_idx].priority <= mh->items[min_idx].priority)
             min_idx = l_idx;
 
-        if (r_idx < mh->size &&
-                mh->items[r_idx].priority <= mh->items[min_idx].priority)
+        if (r_idx < mh->size
+            && mh->items[r_idx].priority <= mh->items[min_idx].priority)
             min_idx = r_idx;
 
         if (min_idx == idx)

@@ -6,10 +6,7 @@
 #ifndef _DYNAMIC_ARRAY_H_
 #define _DYNAMIC_ARRAY_H_
 
-#include <bits/stdint-uintn.h>
-
 #include "types.h"
-
 
 typedef struct {
     Board *items;

@@ -1,10 +1,9 @@
-#include "heuristics.h"
-
-#include <bits/stdint-uintn.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
+#include "heuristics.h"
 #include "pattern_database.h"
 #include "types.h"
 
@@ -14,40 +13,40 @@ static void generate_group(Board board, const Tile *group);
 
 unsigned manhattan_dist(const Board board, unsigned size)
 {
-  int ans, i, j, i1, j1, val;
+    int ans, i, j, i1, j1, val;
 
-  ans = 0;
-  for (i = 0; i < size; i++) {
-    for (j = 0; j < size; j++) {
-      val = board[i * size + j];
-      if (val == 0)
-        continue;
-      i1 = (val - 1) / size;
-      j1 = (val - 1) % size;
-      ans += abs(i1 - i) + abs(j1 - j);
+    ans = 0;
+    for (i = 0; i < size; i++) {
+        for (j = 0; j < size; j++) {
+            val = board[i * size + j];
+            if (val == 0)
+                continue;
+            i1 = (val - 1) / size;
+            j1 = (val - 1) % size;
+            ans += abs(i1 - i) + abs(j1 - j);
+        }
     }
-  }
-  return ans;
+    return ans;
 }
 
 unsigned hamming_dist(const Board board, unsigned size)
 {
-  int i, ans;
+    int i, ans;
 
-  for (i = 0, ans = 0; i < size * size - 1; i++)
-      if (board[i] != i + 1)
-          ans++;
-  return ans;
+    for (i = 0, ans = 0; i < size * size - 1; i++)
+        if (board[i] != i + 1)
+            ans++;
+    return ans;
 }
 
 unsigned linear_conflicts(const Board board, unsigned size)
 {
-    return linear_conflicts_in_rows(board, size) +
-           linear_conflicts_in_cols(board, size) +
-           manhattan_dist(board, size);
+    return linear_conflicts_in_rows(board, size)
+        + linear_conflicts_in_cols(board, size) + manhattan_dist(board, size);
 }
 
-static int linear_conflicts_in_rows(const Board board, unsigned size) {
+static int linear_conflicts_in_rows(const Board board, unsigned size)
+{
     int i, j, k, to_move, nconflicts, max, maxIdx;
     int f[16];
     Tile tj, tk;
@@ -87,8 +86,8 @@ static int linear_conflicts_in_rows(const Board board, unsigned size) {
                 if (j == maxIdx)
                     continue;
                 tj = board[i * size + j];
-                if ((tj != 0 && (tj > tk && j < maxIdx)) ||
-                    (tj < tk && j > maxIdx)) {
+                if ((tj != 0 && (tj > tk && j < maxIdx))
+                    || (tj < tk && j > maxIdx)) {
                     f[j]--;
                     nconflicts -= 2;
                 }
@@ -99,7 +98,8 @@ static int linear_conflicts_in_rows(const Board board, unsigned size) {
     return to_move;
 }
 
-static int linear_conflicts_in_cols(const Board board, unsigned size) {
+static int linear_conflicts_in_cols(const Board board, unsigned size)
+{
     int i, j, k, to_move, nconflicts, max, maxIdx;
     int f[16];
     Tile tj, tk;
@@ -139,8 +139,8 @@ static int linear_conflicts_in_cols(const Board board, unsigned size) {
                 if (i == maxIdx)
                     continue;
                 tj = board[i * size + j];
-                if ((tj != 0 && (tj > tk && i < maxIdx)) ||
-                    (tj < tk && i > maxIdx)) {
+                if ((tj != 0 && (tj > tk && i < maxIdx))
+                    || (tj < tk && i > maxIdx)) {
                     f[i]--;
                     nconflicts -= 2;
                 }
@@ -150,7 +150,6 @@ static int linear_conflicts_in_cols(const Board board, unsigned size) {
     }
     return to_move;
 }
-
 
 static void generate_group(Board board, const Tile *group)
 {

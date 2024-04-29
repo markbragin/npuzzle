@@ -1,16 +1,13 @@
-#include "input.h"
-
-#include <bits/types/FILE.h>
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 #include "heuristics.h"
+#include "input.h"
 #include "pattern_database.h"
 
-
-void parse_args(int argc, char** argv, Heuristics *heuristics, Algo *algo)
+void parse_args(int argc, char **argv, Heuristics *heuristics, Algo *algo)
 {
     int i;
 
@@ -24,27 +21,30 @@ void parse_args(int argc, char** argv, Heuristics *heuristics, Algo *algo)
             *algo = GREEDY_BEFS;
         else if (strcmp(argv[i], "-a") == 0 || strcmp(argv[i], "--astar") == 0)
             *algo = ASTAR;
-        else if (strcmp(argv[i], "-i") == 0 || strcmp(argv[i], "--idastar") == 0)
+        else if (strcmp(argv[i], "-i") == 0
+                 || strcmp(argv[i], "--idastar") == 0)
             *algo = IDASTAR;
-        else if (strcmp(argv[i], "-m") == 0 || strcmp(argv[i], "--manhattan") == 0)
+        else if (strcmp(argv[i], "-m") == 0
+                 || strcmp(argv[i], "--manhattan") == 0)
             *heuristics = manhattan_dist;
-        else if (strcmp(argv[i], "-h") == 0 || strcmp(argv[i], "--hamming") == 0)
+        else if (strcmp(argv[i], "-h") == 0
+                 || strcmp(argv[i], "--hamming") == 0)
             *heuristics = hamming_dist;
         else if (strcmp(argv[i], "-l") == 0 || strcmp(argv[i], "--linear") == 0)
             *heuristics = linear_conflicts;
-        else if (strcmp(argv[i], "-5") == 0 || strcmp(argv[i], "--database555") == 0)
+        else if (strcmp(argv[i], "-5") == 0
+                 || strcmp(argv[i], "--database555") == 0)
             *heuristics = pattern_database555;
-        else if (strcmp(argv[i], "-6") == 0 || strcmp(argv[i], "--database663") == 0)
+        else if (strcmp(argv[i], "-6") == 0
+                 || strcmp(argv[i], "--database663") == 0)
             *heuristics = pattern_database663;
         else if (strcmp(argv[i], "--create555") == 0) {
             create_pattern_database555();
             exit(0);
-        }
-        else if (strcmp(argv[i], "--create663") == 0) {
+        } else if (strcmp(argv[i], "--create663") == 0) {
             exit(0);
             create_pattern_database663();
-        }
-        else if (strcmp(argv[i], "--help") == 0) {
+        } else if (strcmp(argv[i], "--help") == 0) {
             usage();
             exit(0);
         }
@@ -95,7 +95,7 @@ int validate_input(const int *buffer, unsigned len)
     size = (unsigned)sqrt(len);
     if (size * size != len)
         return -1;
-    
+
     memset(used, 0, 256);
 
     for (i = 0; i < len; i++) {
@@ -108,7 +108,6 @@ int validate_input(const int *buffer, unsigned len)
     }
     return 0;
 }
-
 
 void usage(void)
 {

@@ -6,7 +6,6 @@
 #define DB_BOARD_SIZE 4
 #define DB_BOARD_LEN 16
 
-
 /* Path to database */
 extern const char *DB_PATH555;
 extern const char *DB_PATH663;

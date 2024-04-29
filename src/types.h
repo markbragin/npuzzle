@@ -1,10 +1,10 @@
 #ifndef _TYPES_H_
 #define _TYPES_H_
 
-#include <bits/stdint-uintn.h>
+#include <stdint.h>
 
 /* Board type */
-typedef uint8_t* Board;
+typedef uint8_t *Board;
 
 /* Tile type */
 typedef uint8_t Tile;
@@ -18,6 +18,5 @@ typedef enum {
     ASTAR,
     IDASTAR
 } Algo;
-
 
 #endif

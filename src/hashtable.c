@@ -1,18 +1,17 @@
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
 #include "hashtable.h"
 
-#include <bits/stdint-uintn.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-
 static unsigned MIN_CAPACITY = 8;
-
 
 /* HashtableB */
 
 static void resizeb(HashtableB *ht);
 static void insertb(HashtableBItem *items, unsigned capacity, Board key,
-                   Board value, unsigned key_len);
+                    Board value, unsigned key_len);
 
 uint32_t hash(const uint8_t *str, unsigned len)
 {
@@ -89,7 +88,7 @@ static void resizeb(HashtableB *ht)
 
 /* Inserts key value pair into backing array */
 static void insertb(HashtableBItem *items, unsigned capacity, Board key,
-                   Board value, unsigned key_len)
+                    Board value, unsigned key_len)
 {
     HashtableBItem new_item;
     unsigned idx;
@@ -117,14 +116,11 @@ HashtableBItem *htb_find(HashtableB *ht, const Board key)
     return NULL;
 }
 
-
-
 /* HashtableI */
 
 static void resizei(HashtableI *ht);
 static void inserti(HashtableIItem *items, unsigned capacity, Board key,
                     int value, unsigned key_len);
-
 
 HashtableI hti_create(unsigned capacity, unsigned key_len)
 {

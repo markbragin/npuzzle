@@ -1,7 +1,7 @@
+#include <math.h>
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
-#include <math.h>
 
 #include "dynamic_array.h"
 #include "heuristics.h"
@@ -9,7 +9,6 @@
 #include "pattern_database.h"
 #include "solver.h"
 #include "types.h"
-
 
 int main(int argc, char **argv)
 {
@@ -88,8 +87,7 @@ int main(int argc, char **argv)
         printf("Heuristics: Pattern database 5-5-5\n");
         printf("Reading database...\n");
         read_pattern_database(DB_PATH555);
-    }
-    else if (heuristics == pattern_database663) {
+    } else if (heuristics == pattern_database663) {
         printf("Heuristics: Pattern database 6-6-3\n");
         printf("Reading database...\n");
         read_pattern_database(DB_PATH663);
