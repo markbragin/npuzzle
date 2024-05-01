@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -19,6 +20,10 @@ DynamicArray da_create(unsigned capacity, unsigned item_len)
     da.item_len = item_len;
     da.nallocated = 0;
     da.items = malloc(nbytes);
+    if (da.items == NULL) {
+        fprintf(stderr, "Can't allocate memory\n");
+        exit(6);
+    }
     return da;
 }
 
@@ -37,6 +42,10 @@ void da_push(DynamicArray *da, const Board value)
         resize(da);
     if (da->size >= da->nallocated) {
         da->items[da->size] = malloc(da->item_len * sizeof(Tile));
+        if (da->items[da->size] == NULL) {
+            fprintf(stderr, "Can't allocate memory\n");
+            exit(6);
+        }
         da->nallocated++;
     }
     memcpy(da->items[da->size], value, da->item_len);
@@ -46,8 +55,21 @@ void da_push(DynamicArray *da, const Board value)
 /* Doubles the array size */
 static void resize(DynamicArray *da)
 {
-    da->capacity = da->capacity * 2;
-    da->items = realloc(da->items, da->capacity * sizeof(Board));
+    unsigned new_capacity;
+    int i;
+
+    i = 1;
+    do {
+        new_capacity = da->capacity * (1 + 1. / i);
+        da->items = realloc(da->items, new_capacity * sizeof(Board));
+        i++;
+    } while (da->items == NULL && i <= 4);
+
+    da->capacity = new_capacity;
+    if (da->items == NULL) {
+        fprintf(stderr, "Can't allocate memory\n");
+        exit(6);
+    }
 }
 
 Board da_back(DynamicArray *da)

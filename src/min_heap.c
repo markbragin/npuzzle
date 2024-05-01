@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -26,8 +27,11 @@ MinHeap mh_create(unsigned capacity)
     nbytes = sizeof(MinHeapItem) * mh.capacity;
     mh.size = 0;
     mh.items = malloc(nbytes);
+    if (mh.items == NULL) {
+        fprintf(stderr, "Can't allocate memory\n");
+        exit(6);
+    }
     memset(mh.items, 0, nbytes);
-
     return mh;
 }
 
@@ -57,8 +61,22 @@ void mh_push(MinHeap *mh, int priority, Board board, unsigned depth,
 /* Double the backing array size */
 static void resize(MinHeap *mh)
 {
-    mh->capacity = mh->capacity * 2;
-    mh->items = realloc(mh->items, mh->capacity * sizeof(MinHeapItem));
+
+    unsigned new_capacity;
+    int i;
+
+    i = 1;
+    do {
+        new_capacity = mh->capacity * (1 + 1. / i);
+        mh->items = realloc(mh->items, new_capacity * sizeof(MinHeapItem));
+        i++;
+    } while (mh->items == NULL && i <= 4);
+
+    mh->capacity = new_capacity;
+    if (mh->items == NULL) {
+        fprintf(stderr, "Can't allocate memory\n");
+        exit(6);
+    }
 }
 
 /* Fixes heap property after insertion element into idx */

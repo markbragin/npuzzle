@@ -37,6 +37,10 @@ HashtableB htb_create(unsigned capacity, unsigned key_len)
     nbytes = sizeof(HashtableBItem) * ht.capacity;
     ht.size = 0;
     ht.items = malloc(nbytes);
+    if (ht.items == NULL) {
+        fprintf(stderr, "Can't allocate memory\n");
+        exit(6);
+    }
     ht.key_len = key_len;
     memset(ht.items, 0, nbytes);
 
@@ -75,6 +79,10 @@ static void resizeb(HashtableB *ht)
     new_capacity = ht->capacity * 2;
     nbytes = sizeof(HashtableBItem) * new_capacity;
     new_items = malloc(nbytes);
+    if (new_items == NULL) {
+        fprintf(stderr, "Can't allocate memory\n");
+        exit(6);
+    }
     memset(new_items, 0, nbytes);
     for (i = 0, count = 0; i < ht->capacity && count < ht->size; i++) {
         item = ht->items[i];
@@ -131,6 +139,10 @@ HashtableI hti_create(unsigned capacity, unsigned key_len)
     nbytes = sizeof(HashtableIItem) * ht.capacity;
     ht.size = 0;
     ht.items = malloc(nbytes);
+    if (ht.items == NULL) {
+        fprintf(stderr, "Can't allocate memory\n");
+        exit(6);
+    }
     ht.key_len = key_len;
     memset(ht.items, 0, nbytes);
 
@@ -169,6 +181,10 @@ static void resizei(HashtableI *ht)
     new_capacity = ht->capacity * 2;
     nbytes = sizeof(HashtableIItem) * new_capacity;
     new_items = malloc(nbytes);
+    if (new_items == NULL) {
+        fprintf(stderr, "Can't allocate memory\n");
+        exit(6);
+    }
     memset(new_items, 0, nbytes);
     for (i = 0, count = 0; i < ht->capacity && count < ht->size; i++) {
         item = ht->items[i];
