@@ -55,21 +55,23 @@ void da_push(DynamicArray *da, const Board value)
 /* Doubles the array size */
 static void resize(DynamicArray *da)
 {
+    Board * new_items;
     unsigned new_capacity;
     int i;
 
     i = 1;
     do {
         new_capacity = da->capacity * (1 + 1. / i);
-        da->items = realloc(da->items, new_capacity * sizeof(Board));
+        new_items = realloc(da->items, new_capacity * sizeof(Board));
         i++;
-    } while (da->items == NULL && i <= 4);
+    } while (new_items == NULL && i <= 4);
 
-    da->capacity = new_capacity;
-    if (da->items == NULL) {
+    if (new_items == NULL) {
         fprintf(stderr, "Can't allocate memory\n");
         exit(6);
     }
+    da->items = new_items;
+    da->capacity = new_capacity;
 }
 
 Board da_back(DynamicArray *da)

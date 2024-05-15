@@ -61,22 +61,24 @@ void mh_push(MinHeap *mh, int priority, Board board, unsigned depth,
 /* Double the backing array size */
 static void resize(MinHeap *mh)
 {
-
+    MinHeapItem *new_items;
     unsigned new_capacity;
     int i;
 
     i = 1;
     do {
         new_capacity = mh->capacity * (1 + 1. / i);
-        mh->items = realloc(mh->items, new_capacity * sizeof(MinHeapItem));
+        new_items = realloc(mh->items, new_capacity * sizeof(MinHeapItem));
         i++;
-    } while (mh->items == NULL && i <= 4);
+    } while (new_items == NULL && i <= 4);
 
-    mh->capacity = new_capacity;
-    if (mh->items == NULL) {
+    if (new_items == NULL) {
         fprintf(stderr, "Can't allocate memory\n");
         exit(6);
     }
+
+    mh->items = new_items;
+    mh->capacity = new_capacity;
 }
 
 /* Fixes heap property after insertion element into idx */
